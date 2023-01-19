@@ -1,0 +1,4 @@
+systemctl enable strongswan.service
+systemctl start strongswan.service
+
+swanctl -q
