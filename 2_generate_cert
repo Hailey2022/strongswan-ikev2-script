@@ -1,0 +1,23 @@
+# 把{{server_ip}}換成ipv4
+cd ~
+mkdir -p pki
+chmod 700 ~/pki
+cd pki
+
+# 產生CA
+pki --gen --type rsa --size 4096 --outform pem > vpnca.key.pem
+pki --self --flag serverAuth --in vpnca.key.pem --type rsa --digest sha256 --dn "C=HK, O=Organization, CN=server" --ca > vpnca.crt.der
+ 
+# 產生server憑證
+pki --gen --type rsa --size 4096 --outform pem > {{server_ip}}.key.pem
+pki --pub --in {{server_ip}}.key.pem --type rsa > {{server_ip}}.csr
+pki --issue --cacert vpnca.crt.der --cakey vpnca.key.pem --digest sha256 --dn "CN={{server_ip}}" --san @{{server_ip}} --san {{server_ip}} --flag serverAuth --flag ikeIntermediate --outform pem < {{server_ip}}.csr > {{server_ip}}.crt.pem
+ 
+# 複製過去
+cp vpnca.crt.der /etc/swanctl/x509ca/vpnca.crt.der
+cp {{server_ip}}.crt.pem /etc/swanctl/x509/server.crt.pem
+cp {{server_ip}}.key.pem /etc/swanctl/private/server.key.pem
+ 
+# 保護private key
+chown root:root /etc/swanctl/private/server.key.pem
+chmod 600 /etc/swanctl/private/server.key.pem
