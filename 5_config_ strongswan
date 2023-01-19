@@ -1,3 +1,5 @@
+vim /etc/swanctl/conf.d/nam.conf
+# add this...
 connections {
    ikev2-eap {
         version = 2
