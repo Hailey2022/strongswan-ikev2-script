@@ -1,0 +1,7 @@
+apt-get update
+apt-get install gcc automake autoconf libtss2-dev libssl-dev  libsystemd-dev libtss2-tcti-tabrmd0  libtss2-dev pkg-config build-essential -y
+wget https://download.strongswan.org/strongswan-5.9.9.tar.gz
+tar xzvf strongswan-5.9.9.tar.gz
+cd strongswan-5.9.9/
+ ./configure --prefix=/usr --sysconfdir=/etc --with-systemdsystemunitdir=/lib/systemd/system --enable-eap-identity --enable-eap-mschapv2 --enable-tpm --enable-tss-tss2 --enable-systemd --enable-swanctl --disable-charon --disable-stroke --disable-scepclient --disable-gmp --enable-openssl --disable-dependency-tracking
+make && make install
