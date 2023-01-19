@@ -1,0 +1,67 @@
+connections {
+   ikev2-eap {
+        version = 2
+        proposals = aes256-sha256-x25519,aes256-sha256-ecp384,aes256-sha256-ecp256,aes256-sha256-modp2048,aes256-sha1-modp2048
+        rekey_time = 0s
+        pools = primary-pool-ipv4, primary-pool-ipv6
+        fragmentation = yes
+        dpd_delay = 30s
+        send_cert = always
+        if_id_in = 123
+        if_id_out = 123
+        local-1 {
+            auth = pubkey
+            certs = server.crt.pem
+            id = @{{server_ip}}
+        }
+        remote-1 {
+            auth = eap-mschapv2
+            eap_id = %any
+        }
+        children {
+            ikev2-eap {
+                local_ts = 0.0.0.0/0,::/0
+
+                rekey_time = 0s
+                dpd_action = clear
+                esp_proposals = aes256-sha256,aes256-sha1
+            }
+        }
+    }
+}
+pools {
+    primary-pool-ipv4 {
+        addrs = 10.10.3.0/24
+        dns = 8.8.8.8
+    }
+    primary-pool-ipv6 {
+        addrs = fd12:3456:789a:1::/64
+        dns = 2001:4860:4860::8888, 2001:4860:4860::8844
+    }
+}
+secrets {
+    private-server-key {
+        file = server.key.pem
+    }
+    eap-user1 {
+        id = android
+        secret = "password"
+    }
+    eap-user2 {
+        id = ios
+        secret = "password"
+    }
+    eap-user3 {
+        id = windows
+        secret = "password"
+    }
+    eap-user4 {
+        id = macos
+        secret = "password"
+    }
+}
+authorities {
+    vpn-ca {
+        cacert = vpnca.crt.der
+    }
+}
